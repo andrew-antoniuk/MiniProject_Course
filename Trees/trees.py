@@ -10,10 +10,10 @@ class BinaryTreeNode:
     Docstring for BinaryTreeNode
     """
 
-    def __init__(self, value):
+    def __init__(self, value, left = None, right = None):
         self.value = value
-        self.left = None
-        self.right = None
+        self.left = left
+        self.right = right
 
     def __eq__(self, other):
         return self.value == other.value and self.left == other.left and self.right == other.right
@@ -101,3 +101,27 @@ class BinaryTree:
                     queue.append(node.left)
                 if node.right:
                     queue.append(node.right)
+
+    def invert_recursive(self):
+
+        """
+        Swap children of each subtree in the tree with recursion
+        """
+
+        self._invert_helper(self.root)
+
+    def _invert_helper(self, node):
+
+        """
+        The actual recursive logic
+        Preserves the method above from crashes and occasional errors
+        And gives better understanding of the logic
+        """
+
+        if node is None:
+            return
+
+        node.left, node.right = node.right, node.left
+
+        self._invert_helper(node.left)
+        self._invert_helper(node.right)

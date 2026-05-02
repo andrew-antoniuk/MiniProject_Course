@@ -125,3 +125,28 @@ class BinaryTree:
 
         self._invert_helper(node.left)
         self._invert_helper(node.right)
+
+    def depth(self):
+
+        """
+        Maximum depth of the tree
+        """
+
+        return self._depth_helper(self.root)
+
+    def _depth_helper(self, root):
+
+        """
+        Helper for depth method
+        """
+
+        if not root:
+            return 0
+
+        return 1 + max(self._depth_helper(root.left), self._depth_helper(root.right))
+
+    def node_depth(self, node):
+
+        """
+        Depth of a specific node from this tree
+        """

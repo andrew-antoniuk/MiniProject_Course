@@ -16,7 +16,8 @@ class BinaryTreeNode:
         self.right = right
 
     def __eq__(self, other):
-        return self.value == other.value and self.left == other.left and self.right == other.right
+        return self.value == other.value
+        # return self.value == other.value and self.left == other.left and self.right == other.right
 
     def __repr__(self):
         return f"BinaryTreeNode(value={self.value}, left={self.left}, right={self.right})"
@@ -33,7 +34,7 @@ class BinaryTree:
     def __init__(self, root = None):
         self.root = root
 
-    def append(self, value):
+    def add(self, value):
 
         """
         Docstring for append
@@ -41,7 +42,7 @@ class BinaryTree:
 
         new = BinaryTreeNode(value)
 
-        if self.is_empty():
+        if self.empty():
             self.root = new
             return
 
@@ -59,7 +60,7 @@ class BinaryTree:
                 return
             queue.append(node.right)
 
-    def is_empty(self) -> bool:
+    def empty(self) -> bool:
 
         """
         Docstring for is_empty
@@ -89,7 +90,7 @@ class BinaryTree:
         Swap children of each subtree in the tree
         """
 
-        if self.is_empty():
+        if self.empty():
             return
 
         queue = deque([self.root])
@@ -145,8 +146,164 @@ class BinaryTree:
 
         return 1 + max(self._depth_helper(root.left), self._depth_helper(root.right))
 
+    def max_depth(self):
+
+        """
+        Maximum depth
+        """
+
+        if self.empty():
+            return 0
+
+        depth = 0
+        queue = deque([self.root])
+        while queue:
+            depth += 1
+            for _ in range(len(queue)):
+                node = queue.popleft()
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        return depth
+
+    def depth_stack(self):
+
+        """
+        Depth
+        """
+
+        if self.empty():
+            return 0
+
+        max_depth = 0
+        stack = deque([(self.root, 1)])
+        while stack:
+            node, depth = stack.pop()
+            max_depth = max(max_depth, depth)
+            if node.left:
+                stack.append((node.left, depth + 1))
+            if node.right:
+                stack.append((node.right, depth + 1))
+
+        return max_depth
+
     def node_depth(self, node):
 
         """
         Depth of a specific node from this tree
         """
+
+        if self.empty():
+            return -1
+
+        depth = -1
+        queue = deque([self.root])
+        while queue:
+            temp = deque()
+            for n in queue:
+                left, right = n.left, n.right
+
+                if left:
+                    if left is node:
+                        return depth
+                    temp.append(left)
+
+                if right:
+                    if right is node:
+                        return right
+                    temp.append(right)
+
+            queue = temp
+            depth += 1
+
+        return depth
+
+    def bfs(self):
+
+        """
+        BFS
+        """
+
+        if not self.root:
+            return []
+
+        result = []
+        queue = deque([self.root])
+        while queue:
+            current = queue.popleft()
+            result.append(current.value)
+
+            if current.left:
+                queue.append(current.left)
+            if current.right:
+                queue.append(current.right)
+
+        return result
+
+    def is_same_tree(self, other) -> bool:
+
+        """
+        Verify if the tree is the same as current
+        """
+
+        if self.empty() and other.empty():
+            return True
+
+        if self.empty() or other.empty():
+            return False
+
+        queue = deque([(self.root, other.root)])
+
+        while queue:
+            node1, node2 = queue.popleft()
+
+            if not node1 and not node2:
+                continue
+
+            if not node1 or not node2 or node1.val != node2.val:
+                return False
+
+            queue.append((node1.left, node2.left))
+            queue.append((node1.right, node2.right))
+
+        return True
+
+    def is_same_tree_rec(self, other) -> bool:
+
+        """
+        Docstring for is_same_tree_rec
+        """
+
+        return self._is_same_tree_rec_helper(self.root, other.root)
+
+    def _is_same_tree_rec_helper(self, tree1, tree2):
+
+        """
+        Docstring for is_same_tree_rec_helper
+        """
+
+        if tree1 is None and tree2 is None:
+            return True
+
+        if tree1 is None or tree2 is None or tree1 != tree2:
+            return False
+
+        left = self._is_same_tree_rec_helper(tree1.left, tree2.left)
+        right = self._is_same_tree_rec_helper(tree1.right, tree2.right)
+
+        return left and right
+
+    # def is_subtree(self, tree):
+
+    #     """
+    #     Is that tree a subtree of this one
+    #     """
+
+    #     if tree.empty():
+    #         return True
+
+    #     if self.empty() and not tree.empty(): # other.root is not None
+    #         return False
+
+    #     left = self.is_subtree()

@@ -42,7 +42,7 @@ class BinaryTree:
 
         new = BinaryTreeNode(value)
 
-        if self.empty():
+        if self.is_empty():
             self.root = new
             return
 
@@ -60,7 +60,7 @@ class BinaryTree:
                 return
             queue.append(node.right)
 
-    def empty(self) -> bool:
+    def is_empty(self) -> bool:
 
         """
         Docstring for is_empty
@@ -90,7 +90,7 @@ class BinaryTree:
         Swap children of each subtree in the tree
         """
 
-        if self.empty():
+        if self.is_empty():
             return
 
         queue = deque([self.root])
@@ -152,7 +152,7 @@ class BinaryTree:
         Maximum depth
         """
 
-        if self.empty():
+        if self.is_empty():
             return 0
 
         depth = 0
@@ -173,7 +173,7 @@ class BinaryTree:
         Depth
         """
 
-        if self.empty():
+        if self.is_empty():
             return 0
 
         max_depth = 0
@@ -194,7 +194,7 @@ class BinaryTree:
         Depth of a specific node from this tree
         """
 
-        if self.empty():
+        if self.is_empty():
             return -1
 
         depth = -1
@@ -247,10 +247,10 @@ class BinaryTree:
         Verify if the tree is the same as current
         """
 
-        if self.empty() and other.empty():
+        if self.is_empty() and other.empty():
             return True
 
-        if self.empty() or other.empty():
+        if self.is_empty() or other.empty():
             return False
 
         queue = deque([(self.root, other.root)])
@@ -307,3 +307,174 @@ class BinaryTree:
     #         return False
 
     #     left = self.is_subtree()
+
+class BinarySearchTree:
+
+    """
+    Docstring for BinarySearchTree
+    """
+
+    def __init__(self, node = None):
+        self.root = node
+
+    def is_empty(self) -> bool:
+
+        """
+        Emptiness of the BST
+        """
+
+        return self.root is None
+
+    def add(self, value):
+
+        """
+        Add new node to BST
+        """
+
+        new = BinaryTreeNode(value)
+
+        if self.is_empty():
+            self.root = new
+            return
+
+        parent = None
+        current = self.root
+        while current is not None:
+            parent = current
+            if value < current.value:
+                current = current.left
+            elif value > current.value:
+                current = current.right
+            else:
+                return
+
+        if value < parent.value:
+            parent.left = new
+        else:
+            parent.right = new
+
+    def is_inside(self, value) -> bool:
+
+        """
+        Docstring for is_inside
+        """
+
+        if self.is_empty():
+            return False
+
+        current = self.root
+        while current is not None:
+            if value < current.value:
+                current = current.left
+            elif value > current.value:
+                current = current.right
+            else:
+                return True
+
+        return False
+
+    def is_root(self, node):
+
+        """
+        Check if this node is the root
+        """
+
+        return self.root is node
+
+    def find_path_to(self, value):
+
+        """
+        Find path to the specific value
+        """
+
+        path = []
+
+        if self.is_empty():
+            return path
+
+        current = self.root
+        while current is not None:
+            if value < current.value:
+                current = current.left
+                path.append(current.left.value)
+            elif value > current.value:
+                current = current.right
+                path.append(current.right.value)
+            else:
+                return path
+
+        return path
+
+    def lca(self, val1, val2):
+
+        """
+        Finds lowest common ancestor of 2 nodes
+        """
+
+        if self.is_empty():
+            return None
+
+        path1, path2 = self.find_path_to(val1), self.find_path_to(val2)
+        for i in range(min(len(path1), len(path2)) + 1):
+            if path1[i] != path2[i]:
+                return self.get_node(path1[i - 1])
+
+        return None
+
+    def get_node(self, value):
+
+        """
+        Docstring for get_node
+        """
+
+        if self.is_empty():
+            return None
+
+        current = self.root
+        while current is not None:
+            if value < current.value:
+                current = current.left
+            elif value > current.value:
+                current = current.right
+            else:
+                return current
+
+        return None
+
+    def level_order_traversal(self):
+
+        """
+        Traverse the Tree with Level Order Traversal
+        """
+
+        if self.is_empty():
+            return []
+
+        current = self.root
+        result, level = [], deque([current])
+
+        while level:
+            for _ in range(len(level)):
+                n = level.popleft()
+                if n.left:
+                    level.append(n.left)
+                if n.right:
+                    level.append(n.right)
+            result.append(level)
+
+        return result
+
+    # def validate_tree(self):
+
+    #     """
+    #     Docstring for validate_tree
+    #     """
+
+    #     if self.is_empty():
+    #         return True
+
+    #     def helper(root):
+    #         if
+
+    #         return helper(root.left) and helper(root.right)
+    #     return helper(self.root)
